@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 // Fim do semestre: 16/10/2026 às 23:59:59 (mês começa em 0 → 9 = outubro)
-const TARGET = new Date(2026, 9, 16, 23, 59, 59);
+const TARGET = new Date(2026, 11, 16, 23, 59, 59);
 
 function getTimeLeft() {
   const diff = TARGET.getTime() - Date.now();
