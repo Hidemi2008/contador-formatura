@@ -1,122 +1,71 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
 
-function App() {
-  const [count, setCount] = useState(0)
+// Fim do semestre: 16/10/2026 às 23:59:59 (mês começa em 0 → 9 = outubro)
+const TARGET = new Date(2026, 9, 16, 23, 59, 59);
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+function getTimeLeft() {
+  const diff = TARGET.getTime() - Date.now();
+  if (diff <= 0) {
+    return { done: true, days: 0, hours: 0, minutes: 0, seconds: 0 };
+  }
+  return {
+    done: false,
+    days: Math.floor(diff / 86400000),
+    hours: Math.floor((diff / 3600000) % 24),
+    minutes: Math.floor((diff / 60000) % 60),
+    seconds: Math.floor((diff / 1000) % 60),
+  };
 }
 
-export default App
+const pad = (n) => String(n).padStart(2, "0");
+
+function Unit({ value, label }) {
+  return (
+    <div className="unit">
+      <span className="unit-value" key={value}>
+        {pad(value)}
+      </span>
+      <span className="unit-label">{label}</span>
+    </div>
+  );
+}
+
+export default function App() {
+  const [time, setTime] = useState(getTimeLeft());
+
+  useEffect(() => {
+    const id = setInterval(() => setTime(getTimeLeft()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <main className="stage">
+      <div className="orb orb-a" />
+      <div className="orb orb-b" />
+
+      <section className="card">
+        <p className="eyebrow">🎓 Contagem regressiva</p>
+        <h1>
+          Rumo à <span className="grad">formatura</span>
+        </h1>
+        <p className="sub">
+          {time.done
+            ? "Semestre concluído. Missão cumprida!"
+            : "Falta pouco para o fim do semestre (16/10/2026)"}
+        </p>
+
+        <div className="clock">
+          <Unit value={time.days} label="dias" />
+          <span className="sep">:</span>
+          <Unit value={time.hours} label="horas" />
+          <span className="sep">:</span>
+          <Unit value={time.minutes} label="minutos" />
+          <span className="sep">:</span>
+          <Unit value={time.seconds} label="segundos" />
+        </div>
+
+        <p className="foot">Feito com React ⚛️</p>
+      </section>
+    </main>
+  );
+}
